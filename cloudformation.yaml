@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Deploy n8n with Docker on Ubuntu 24.04 and CloudFront Distribution (HTTP-only, port 5678)
+Description: Deploy n8n with Docker on Ubuntu 24.04 and CloudFront Distribution
 
 Parameters:
   InstanceType:
@@ -164,6 +164,7 @@ Resources:
             -e N8N_BASIC_AUTH_ACTIVE="true" \
             -e N8N_BASIC_AUTH_USER="admin" \
             -e N8N_BASIC_AUTH_PASSWORD="supersecret" \
+            -e N8N_PUSH_BACKEND="sse" \
             -v n8n_data:/home/node/.n8n \
             docker.n8n.io/n8nio/n8n:latest
 
@@ -180,9 +181,12 @@ Resources:
               HTTPPort: 5678
               HTTPSPort: 443
               OriginProtocolPolicy: http-only
+            OriginCustomHeaders:
+              - HeaderName: Origin
+                HeaderValue: !Join ["", ["http://", !GetAtt N8nInstance.PublicDnsName]]
         DefaultCacheBehavior:
           TargetOriginId: N8nOrigin
-          ViewerProtocolPolicy: allow-all
+          ViewerProtocolPolicy: redirect-to-https
           AllowedMethods: ["GET","HEAD","OPTIONS","PUT","POST","PATCH","DELETE"]
           CachedMethods: ["GET","HEAD"]
           # Managed CachingDisabled
