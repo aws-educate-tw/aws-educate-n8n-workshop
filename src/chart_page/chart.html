@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chart Report</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Noto Sans TC", sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        background: linear-gradient(to top right, #f3e7e9, #e3eeff);
+        color: #333;
+        padding: 2rem;
+      }
+      .card {
+        width: 100%;
+        max-width: 700px;
+        background-color: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+        padding: 2rem 2.5rem;
+        box-sizing: border-box;
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 1rem;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #1a202c;
+      }
+      .header p {
+        margin: 0.25rem 0 0 0;
+        color: #718096;
+      }
+      .chart-container {
+        position: relative;
+        width: 100%;
+        max-width: 450px;
+        margin: 0 auto;
+      }
+      .footer {
+        text-align: center;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #eee;
+      }
+      #download-btn {
+        background-color: #06d6a0;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-family: "Noto Sans TC", sans-serif;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+      }
+      #download-btn:hover {
+        background-color: #05b386;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="header">
+        <h1>數據分析報告</h1>
+        <p id="chart-title">科系分佈圓餅圖</p>
+      </div>
+      <div class="chart-container">
+        <canvas id="myChart"></canvas>
+      </div>
+      <div class="footer">
+        <button id="download-btn">下載圖表 (PNG)</button>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const params = new URLSearchParams(window.location.search);
+        const titleParam = params.get("title");
+        const typeParam = params.get("type") || "doughnut";
+        const labelsParam = params.get("labels");
+        const dataParam = params.get("data");
+
+        if (titleParam) {
+          document.getElementById("chart-title").textContent = titleParam;
+        }
+
+        if (!labelsParam || !dataParam) {
+          console.error("Labels or data not provided in URL parameters.");
+          return;
+        }
+
+        try {
+          const labels = labelsParam.split("|");
+          const data = dataParam.split("|").map(Number);
+
+          // A beautiful, harmonious color palette
+          const colorPalette = [
+            "#5A8DFF",
+            "#FF8A8A",
+            "#FFD166",
+            "#06D6A0",
+            "#8338EC",
+            "#FF6B6B",
+            "#4ECDC4",
+            "#F9C74F",
+          ];
+
+          // --- Dynamic Dataset Styling ---
+          let datasetOptions = {
+            label: "人數",
+            data: data,
+            borderWidth: 2,
+          };
+
+          if (typeParam === "line") {
+            datasetOptions.borderColor = colorPalette[0];
+            datasetOptions.backgroundColor = colorPalette[0] + "33"; // Add alpha for fill
+            datasetOptions.tension = 0.4; // Make the line curvy
+            datasetOptions.fill = true;
+            datasetOptions.pointBackgroundColor = colorPalette[0];
+            datasetOptions.pointRadius = 5;
+            datasetOptions.pointHoverRadius = 7;
+          } else {
+            // For pie, doughnut, bar
+            datasetOptions.backgroundColor = colorPalette;
+            datasetOptions.borderColor = "#ffffff";
+            datasetOptions.hoverOffset = 8;
+          }
+          // --- End Dynamic Styling ---
+
+          const ctx = document.getElementById("myChart").getContext("2d");
+          new Chart(ctx, {
+            type: typeParam,
+            data: {
+              labels: labels,
+              datasets: [datasetOptions],
+            },
+            options: {
+              responsive: true,
+              cutout: "60%", // Makes the doughnut hole smaller/larger
+              animation: {
+                animateScale: true,
+                animateRotate: true,
+                duration: 1200,
+                easing: "easeInOutQuart",
+              },
+              plugins: {
+                legend: {
+                  position: "bottom",
+                  labels: {
+                    font: {
+                      size: 14,
+                      family: "'Noto Sans TC', sans-serif",
+                    },
+                    padding: 20,
+                  },
+                },
+                tooltip: {
+                  enabled: true,
+                  backgroundColor: "#2d3748",
+                  titleFont: {
+                    size: 16,
+                    weight: "bold",
+                    family: "'Noto Sans TC', sans-serif",
+                  },
+                  bodyFont: { size: 14, family: "'Noto Sans TC', sans-serif" },
+                  cornerRadius: 8,
+                  padding: 12,
+                  callbacks: {
+                    label: function (context) {
+                      let label = context.dataset.label || "";
+                      if (label) {
+                        label += ": ";
+                      }
+                      let value = null;
+                      if (context.parsed.y !== undefined) {
+                        value = context.parsed.y;
+                      } else {
+                        value = context.parsed;
+                      }
+                      label += value;
+                      return label;
+                    },
+                  },
+                },
+              },
+            },
+          });
+        } catch (e) {
+          console.error("Failed to parse or render chart:", e);
+        }
+
+        const downloadBtn = document.getElementById("download-btn");
+        if (downloadBtn) {
+          downloadBtn.addEventListener("click", () => {
+            const chartInstance = Chart.getChart("myChart");
+            if (chartInstance) {
+              const link = document.createElement("a");
+              link.href = chartInstance.toBase64Image("image/png", 1);
+              link.download = "chart-report.png";
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+            }
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
