@@ -1,0 +1,6 @@
+{
+  "queryStringParameters": {
+    "output": "html"
+  },
+  "body": "{\"type\":\"pie\",\"labels\":[\"資訊工程\",\"資訊管理\",\"電機工程\",\"企業管理\"],\"data\":[10,20,15,5]}"
+}
