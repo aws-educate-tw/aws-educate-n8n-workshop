@@ -209,3 +209,7 @@ Outputs:
   CloudFrontURL:
     Description: Access n8n via CloudFront
     Value: !Join ["", ["https://", !GetAtt N8nCloudFrontDistribution.DomainName]]
+
+  EC2ConsoleLink:
+    Description: Direct link to the EC2 instance in the AWS Management Console
+    Value: !Sub 'https://console.aws.amazon.com/ec2/v2/home?region=${AWS::Region}#InstanceDetails:instanceId=${N8nInstance}'
