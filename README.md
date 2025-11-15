@@ -1,49 +1,27 @@
-# aws-educate-n8n-workshop
+<div align="center">
+  <img src="./imgs/example-view-mobile.png" alt="cover" width="300" height="550">
+</div>
+<br>
+<h1 align="center">AWS x n8n 整合實戰：打造 LINE AI bot 助理</h1>
+<p align="center"></p>
+
+<p align="center">
+  <a aria-label="License" href="https://github.com/aws-educate-tw/aws-educate-n8n-workshop/blob/main/LICENSE">
+    <img alt="" src="https://img.shields.io/github/license/aws-educate-tw/aws-educate-n8n-workshop">
+  </a>
+  <a aria-label="Notion page" href="https://aws-educate-tw.notion.site/20251119-AWS-x-n8n-LINE-AI-bot-2ab6bfee6817803ea8fcf32e13351a35?source=copy_link">
+    <img alt="Notion" src="https://img.shields.io/badge/Notion-View%20Page-brightgreen?style=social&logo=Notion&link=https://aws-educate-tw.notion.site/20251119-AWS-x-n8n-LINE-AI-bot-2ab6bfee6817803ea8fcf32e13351a35?source=copy_link">
+  </a>
+  </a>
+</p>
 
 
-## Build generate_chart.zip
+歡迎來到 AWS Educate【AWS x n8n 整合實戰：打造 LINE AI Bot 助理】工作坊！
 
-```bash
-docker run --platform linux/amd64 --rm --entrypoint /bin/sh -v "$PWD":/var/task amazon/aws-lambda-nodejs:20 -c "cd /var/task/src/generate_chart && rm -rf node_modules package-lock.json && dnf install -y zip && npm install && zip -r /var/task/generate_chart.zip ."
-```
+在本次工作坊中，我們會以「你是證照陪跑計畫的主辦人」這個情境為背景，帶你一步步學會如何使用 n8n 串接 LINE、Google Sheet、AWS Bedrock、Lambda 等服務，打造一個能回應使用者問題並自動產生圖表的 LINE AI Bot 助理。
+最後，你也會實際練習如何在 AWS 上自架屬於自己的 n8n。
 
-
-## Test the Chart Generator API
-```bash
-curl -X POST \
-  'https://b8kpxud0ge.execute-api.us-east-1.amazonaws.com?output=html' \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "type": "line",
-    "labels": ["第一週", "第二週", "第三週", "第四週"],
-    "data": [5, 15, 12, 25]
-}'
-```
-
-
-## n8n Docker run command (use it after CloudFront is ready)
-
-```
-DOMAIN="USE YOU OWN CloudFrontURL REMOVE https://"
-
-sudo docker stop n8n
-sudo docker rm n8n
-
-sudo docker run -d \
-  --name n8n \
-  -p 5678:5678 \
-  -e GENERIC_TIMEZONE="Asia/Taipei" \
-  -e TZ="Asia/Taipei" \
-  -e N8N_BASIC_AUTH_ACTIVE="true" \
-  -e N8N_BASIC_AUTH_USER="admin" \
-  -e N8N_BASIC_AUTH_PASSWORD="supersecret" \
-  -e N8N_PUSH_BACKEND="sse" \
-  -e N8N_HOST="$DOMAIN" \
-  -e N8N_EDITOR_BASE_URL="https://$DOMAIN" \
-  -e WEBHOOK_URL="https://$DOMAIN" \
-  -v n8n_data:/home/node/.n8n \
-  docker.n8n.io/n8nio/n8n:latest
-```
-
-
-```
+## Architecture Diagram
+<div align="center">
+  <img src="./imgs/architecture-diagram.png" alt="architecture" width="800">
+</div>
