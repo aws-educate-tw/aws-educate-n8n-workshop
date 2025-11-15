@@ -22,10 +22,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Update charts if they exist
         if (window.myCharts.length > 0) {
-            const newLegendColor = theme === "light" ? "#232f3e" : "#d5dbdb";
-            const newBorderColor = theme === "light" ? "#ffffff" : "#2E3D4F";
+            const isLight = theme === "light";
+            const newLegendColor = isLight ? "#232f3e" : "#d5dbdb";
+            const newBorderColor = isLight ? "#ffffff" : "#2E3D4F";
+            const newTickColor = isLight ? "#4a5568" : "#ffffff";
+            const newGridColor = isLight ? "#e2e8f0" : "#4a5568";
+
             window.myCharts.forEach((chart) => {
                 chart.options.plugins.legend.labels.color = newLegendColor;
+                chart.options.scales.x.ticks.color = newTickColor;
+                chart.options.scales.y.ticks.color = newTickColor;
+                chart.options.scales.x.grid.color = newGridColor;
+                chart.options.scales.y.grid.color = newGridColor;
+
                 if (chart.config.type !== "line") {
                     chart.data.datasets[0].borderColor = newBorderColor;
                 }
@@ -76,7 +85,9 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="header"><h2>${
           chartConfig.title || "未命名圖表"
         }</h2></div>
-        <div class="chart-container"><canvas id="${canvasId}"></canvas></div>
+        <div class="chart-body">
+            <div class="chart-container"><canvas id="${canvasId}"></canvas></div>
+        </div>
         <div class="footer">
           <button class="download-btn" data-canvas-id="${canvasId}">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
@@ -144,24 +155,45 @@ function renderChart(canvasId, config) {
             "#2E3D4F";
     }
     const ctx = document.getElementById(canvasId).getContext("2d");
+    const isLightMode = document.body.classList.contains("light-mode");
+    const tickColor = isLightMode ? "#4a5568" : "#ffffff";
+    const gridColor = isLightMode ? "#e2e8f0" : "#4a5568";
+
     const chart = new Chart(ctx, {
         type: type,
         data: {
             labels: labels,
-            datasets: [datasetOptions]
+            datasets: [datasetOptions],
         },
         options: {
             responsive: true,
             maintainAspectRatio: true,
+            scales: {
+                x: {
+                    ticks: {
+                        color: tickColor,
+                    },
+                    grid: {
+                        color: gridColor,
+                    },
+                },
+                y: {
+                    ticks: {
+                        color: tickColor,
+                    },
+                    grid: {
+                        color: gridColor,
+                    },
+                },
+            },
             plugins: {
                 legend: {
                     position: "bottom",
                     labels: {
-                        color: document.body.classList.contains("light-mode") ?
-                            "#232f3e" : "#d5dbdb",
+                        color: isLightMode ? "#232f3e" : "#d5dbdb",
                         font: {
                             size: 14,
-                            family: "'Noto Sans TC', sans-serif"
+                            family: "'Noto Sans TC', sans-serif",
                         },
                     },
                 },

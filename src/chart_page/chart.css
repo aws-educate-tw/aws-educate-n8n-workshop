@@ -163,6 +163,9 @@ body {
 }
 
 .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
     background-color: var(--aws-dark-gray);
     border-radius: 8px;
     border: 1px solid var(--border-color);
@@ -190,6 +193,14 @@ body {
     transition: color 0.3s ease;
 }
 
+.chart-body {
+    flex-grow: 1;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    transition: border-color 0.3s ease;
+}
+
 .chart-container {
     position: relative;
     width: 100%;
@@ -199,10 +210,6 @@ body {
 
 .footer {
     text-align: right;
-    margin-top: 1.5rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border-color);
-    transition: border-color 0.3s ease;
 }
 
 .download-btn {
