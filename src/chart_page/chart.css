@@ -100,6 +100,26 @@ body {
     color: var(--aws-orange);
 }
 
+.shining-link {
+    color: var(--aws-orange) !important;
+    font-weight: 700 !important;
+    animation: subtle-glow 2.5s infinite ease-in-out;
+}
+
+@keyframes subtle-glow {
+    0% {
+        text-shadow: 0 0 4px rgba(255, 153, 0, 0.7);
+    }
+
+    50% {
+        text-shadow: 0 0 12px rgba(255, 153, 0, 1);
+    }
+
+    100% {
+        text-shadow: 0 0 4px rgba(255, 153, 0, 0.7);
+    }
+}
+
 .report-header {
     display: flex;
     justify-content: center;
