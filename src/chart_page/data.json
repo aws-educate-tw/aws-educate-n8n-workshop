@@ -1,0 +1,11 @@
+{
+  "pageTitle": "測試圖表報告",
+  "charts": [
+    {
+      "type": "bar",
+      "title": "每月銷售額",
+      "labels": ["Jan", "Feb", "Mar"],
+      "data": [10, 20, 30]
+    }
+  ]
+}
