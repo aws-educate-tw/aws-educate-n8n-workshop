@@ -41,6 +41,48 @@ exports.handler = async (event) => {
     try {
         const output = (event.queryStringParameters && event.queryStringParameters.output) || 'png';
         const requestBody = JSON.parse(event.body);
+
+        // HTML output mode
+        if (output === 'html') {
+            const {
+                pageTitle,
+                charts
+            } = requestBody;
+
+            if (!pageTitle || !charts || !Array.isArray(charts)) {
+                return {
+                    statusCode: 400,
+                    body: JSON.stringify({
+                        message: 'Invalid input for HTML output. "pageTitle" and "charts" array are required.'
+                    }),
+                };
+            }
+
+            const chartPageUrl = process.env.CHART_PAGE_URL;
+
+            // The request body is already in the desired format.
+            const chartData = {
+                pageTitle,
+                charts
+            };
+
+            const minified = JSON.stringify(chartData);
+            const safe = encodeURIComponent(minified);
+            const b64 = Buffer.from(safe).toString('base64');
+            const finalUrl = `${chartPageUrl}?data=${b64}`;
+
+            return {
+                statusCode: 200,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    chartUrl: finalUrl
+                }),
+            };
+        }
+
+        // PNG output mode (default) - remains the same, expects labels, data, type
         const {
             labels,
             data,
@@ -51,32 +93,11 @@ exports.handler = async (event) => {
             return {
                 statusCode: 400,
                 body: JSON.stringify({
-                    message: 'Invalid input. "labels" and "data" must be arrays of the same length.'
+                    message: 'Invalid input for PNG output. "labels" and "data" must be arrays of the same length.'
                 }),
             };
         }
 
-        // HTML output mode
-        if (output === 'html') {
-            const chartPageUrl = process.env.CHART_PAGE_URL;
-            const url = new URL(chartPageUrl);
-            url.searchParams.append('title', 'Department Distribution');
-            url.searchParams.append('type', type || 'pie');
-            url.searchParams.append('labels', labels.join('|'));
-            url.searchParams.append('data', data.join('|'));
-
-            return {
-                statusCode: 200,
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    chartUrl: url.toString()
-                }),
-            };
-        }
-
-        // PNG output mode (default)
         const configuration = {
             type: type || 'pie',
             data: {
