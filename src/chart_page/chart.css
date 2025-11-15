@@ -263,3 +263,19 @@ body:not(.light-mode) #moon-icon {
 .page-footer p {
     margin: 0.5rem 0;
 }
+
+/* Responsive Design for Mobile */
+@media (max-width: 768px) {
+    .navbar-links {
+        display: none;
+    }
+
+    .navbar-container {
+        justify-content: space-between;
+    }
+
+    .navbar-right {
+        margin-left: auto;
+        /* Pushes the theme switcher to the right */
+    }
+}
