@@ -159,6 +159,8 @@ function renderChart(canvasId, config) {
     const tickColor = isLightMode ? "#4a5568" : "#ffffff";
     const gridColor = isLightMode ? "#e2e8f0" : "#4a5568";
 
+    const isMobile = window.innerWidth <= 768;
+
     const chart = new Chart(ctx, {
         type: type,
         data: {
@@ -167,7 +169,7 @@ function renderChart(canvasId, config) {
         },
         options: {
             responsive: true,
-            maintainAspectRatio: true,
+            maintainAspectRatio: !isMobile,
             scales: {
                 x: {
                     ticks: {
