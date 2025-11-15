@@ -1,0 +1,1 @@
+docker run --platform linux/amd64 --rm --entrypoint /bin/sh -v "$PWD":/var/task amazon/aws-lambda-nodejs:20 -c "cd /var/task/src/generate_chart && rm -rf node_modules package-lock.json && dnf install -y zip && npm install && zip -r /var/task/generate_chart.zip ."
